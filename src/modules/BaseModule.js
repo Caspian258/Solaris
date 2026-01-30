@@ -138,6 +138,35 @@ export class BaseModule {
     }, 1000);
   }
 
+  setDestination(targetPosition) {
+    if (!this.mesh) return;
+    
+    // Animación suave de descenso
+    const descentDuration = 120; // frames (~2 segundos a 60fps)
+    let frame = 0;
+    const startPos = this.mesh.position.clone();
+    
+    const animateDescend = () => {
+      frame++;
+      const progress = frame / descentDuration;
+      
+      // Easing suave (ease-out)
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      
+      this.mesh.position = BABYLON.Vector3.Lerp(startPos, targetPosition, easeProgress);
+      
+      if (frame < descentDuration) {
+        requestAnimationFrame(animateDescend);
+      } else {
+        // Aterrizaje completado
+        this.mesh.position = targetPosition.clone();
+        this.isDocked = true;
+      }
+    };
+    
+    animateDescend();
+  }
+
   triggerFault() {
     if (this.status === "CRITICAL") return; // Ya está en fallo
 
