@@ -501,6 +501,11 @@ export class UIManager {
   }
 
   update() {
+    // Actualizar LaunchHUD si existe
+    if (this.launchHUD) {
+      this.launchHUD.update();
+    }
+
     if (!this.selectedModule) return;
 
     const temp = this.selectedModule.temperature || 50;

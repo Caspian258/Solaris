@@ -116,8 +116,8 @@ export class SimulationManager {
     }
 
     // HUD
-    if (this.sceneManager.uiManager && this.sceneManager.uiManager.launchHUD) {
-      this.sceneManager.uiManager.launchHUD.show(module, targetPos);
+    if (this.launchHUD) {
+      this.launchHUD.show(module, targetPos);
     }
 
     // Log
