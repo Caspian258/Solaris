@@ -53,7 +53,7 @@ export class SimulationManager {
       });
 
       if (!isOccupied) {
-        return candidatePos;
+        return { position: candidatePos, angle: angle };
       }
     }
     return null;
@@ -65,30 +65,40 @@ export class SimulationManager {
       return;
     }
 
-    const targetPos = this.findFreeSlot(this.activeHub);
+    const slotInfo = this.findFreeSlot(this.activeHub);
 
-    if (!targetPos) {
+    if (!slotInfo) {
       if (this.sceneManager.uiManager) {
         this.sceneManager.uiManager.showWarningToast("HUB COMPLETO. Active otro nodo.");
       }
       return;
     }
 
+    const targetPos = slotInfo.position;
+
     // Instanciar
     const module = new ModuleClass(this.sceneManager.scene, targetPos);
     
-    // Rotación Geométrica
-    module.mesh.rotation.y = Math.PI / 6;
+    // Rotación para alineación cara a cara
+    // El módulo ya tiene una rotación base de 30° (Math.PI / 6)
+    // Necesitamos que mire hacia el hub (180° + ángulo del slot)
+    const rotationAngle = (slotInfo.angle + 180) * (Math.PI / 180);
+    module.mesh.rotation.y = rotationAngle + (Math.PI / 6); // Agregar rotación base
     
     // Configuración
     if (config.name) module.name = config.name;
     if (config.color) module.updateColor(config.color);
     
-    // Identificar si es Hub
+    // Identificar si es Hub (SOLO para HUB_NODE)
     if (config.type === "HUB_NODE") {
       module.type = "HUB_NODE";
       if (!module.mesh.metadata) module.mesh.metadata = {};
       module.mesh.metadata.isHub = true;
+    } else {
+      // Módulos normales NO son hubs
+      module.type = "MODULE";
+      if (!module.mesh.metadata) module.mesh.metadata = {};
+      module.mesh.metadata.isHub = false;
     }
 
     // Registrar
@@ -201,5 +211,60 @@ export class SimulationManager {
         module.update(deltaTime);
       }
     });
+  }
+
+  triggerRandomFault() {
+    // Filtrar solo módulos operativos (no hubs, no en falla)
+    const operationalModules = this.modules.filter(m => {
+      const mod = m.mesh?.metadata?.parentModule || m;
+      return mod && mod.status === "NOMINAL" && mod.type !== "HUB_NODE" && !mod.mesh?.metadata?.isHub;
+    });
+
+    if (operationalModules.length === 0) {
+      if (this.sceneManager.uiManager) {
+        this.sceneManager.uiManager.showWarningToast("No hay módulos operativos para simular falla");
+      }
+      return;
+    }
+
+    // Seleccionar uno aleatorio
+    const randomIndex = Math.floor(Math.random() * operationalModules.length);
+    const moduleWrapper = operationalModules[randomIndex];
+    const module = moduleWrapper.mesh?.metadata?.parentModule || moduleWrapper;
+
+    if (module && module.triggerFault) {
+      module.triggerFault();
+      
+      if (this.sceneManager.uiManager) {
+        this.sceneManager.uiManager.log(`⚠️ CRITICAL FAULT detected in ${module.name}!`, "ERROR");
+        this.sceneManager.uiManager.showWarningToast(`ALERT: ${module.name} malfunction detected!`);
+      }
+
+      // Efectos visuales
+      if (this.fxManager && this.fxManager.spawnAlertParticles) {
+        this.fxManager.spawnAlertParticles(module.mesh.position);
+      }
+    }
+  }
+
+  fixAllFaults() {
+    let fixedCount = 0;
+
+    this.modules.forEach(moduleWrapper => {
+      const module = moduleWrapper.mesh?.metadata?.parentModule || moduleWrapper;
+      if (module && module.status === "CRITICAL" && module.repairFault) {
+        module.repairFault();
+        fixedCount++;
+      }
+    });
+
+    if (this.sceneManager.uiManager) {
+      if (fixedCount > 0) {
+        this.sceneManager.uiManager.log(`✅ System restored: ${fixedCount} module(s) repaired`, "SUCCESS");
+        this.sceneManager.uiManager.showWarningToast(`${fixedCount} fault(s) resolved`);
+      } else {
+        this.sceneManager.uiManager.log("No faults detected in the system", "INFO");
+      }
+    }
   }
 }
