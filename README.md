@@ -11,7 +11,7 @@
 
 - [The Problem](#-the-problem)
 - [The Solution](#-the-solution)
-- [What is Halo?](#-what-is-halo)
+- [What is Solaris?](#-what-is-Solaris)
 - [Key Features](#-key-features)
 - [How It Works](#-how-it-works)
 - [Interface Overview](#-interface-overview)
@@ -38,7 +38,7 @@ Current space-based manufacturing is limited by:
 
 ## 💡 The Solution
 
-**Halo** proposes a fully autonomous, modular space factory operating in Low Earth Orbit (LEO) at ~400km altitude. By eliminating human presence and leveraging microgravity, we can:
+**Solaris** proposes a fully autonomous, modular space factory operating in Low Earth Orbit (LEO) at ~400km altitude. By eliminating human presence and leveraging microgravity, we can:
 
 ✅ **Achieve perfect crystalline structures** - Zero-gravity environments allow materials to form ideal molecular arrangements  
 ✅ **Eliminate contamination** - Vacuum of space provides the ultimate cleanroom  
@@ -47,9 +47,9 @@ Current space-based manufacturing is limited by:
 ✅ **Reduce costs** - No life support, no crew rotations, minimal maintenance  
 ✅ **Maximize safety** - No human risk for hazardous experiments  
 
-## 🚀 What is Halo?
+## 🚀 What is Solaris?
 
-**Halo** is a Digital Twin platform for designing, simulating, and monitoring autonomous orbital manufacturing hubs. It provides:
+**Solaris** is a Digital Twin platform for designing, simulating, and monitoring autonomous orbital manufacturing hubs. It provides:
 
 ### Core Concept
 
@@ -180,8 +180,8 @@ Create complex networks by:
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/halo.git
-cd halo
+git clone https://github.com/yourusername/Solaris.git
+cd Solaris
 ```
 
 2. **Start a local server**
@@ -218,7 +218,7 @@ http://localhost:5173
 ## 📁 Project Structure
 
 ```
-halo/
+Solaris/
 ├── index.html                 # Main entry point
 ├── style.css                  # Global styles
 ├── assets/                    # Media resources
@@ -309,7 +309,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📧 Contact
 
-Project Link: [https://github.com/yourusername/halo](https://github.com/yourusername/halo)
+Project Link: [https://github.com/yourusername/Solaris](https://github.com/yourusername/Solaris)
 
 ---
 
