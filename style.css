@@ -512,6 +512,7 @@ body {
   border-bottom: 1px solid #334155;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
 }
 
@@ -549,6 +550,31 @@ body {
 
 .log-type.WARNING {
   color: #f59e0b;
+}
+
+/* Estilos adicionales para los botones del system log */
+#btn-close-log:hover {
+  color: #ef4444 !important;
+}
+
+#btn-open-log:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+}
+
+#btn-open-log:active {
+  transform: translateY(0);
+}
+
+/* Transición suave para mostrar/ocultar system log */
+#system-log {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+#system-log.hidden {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .log-type.ERROR {

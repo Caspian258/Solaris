@@ -5,6 +5,8 @@
 [![Babylon.js](https://img.shields.io/badge/Babylon.js-4.2+-blue.svg)](https://www.babylonjs.com/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
+![Space Factory Banner](assets/banner.png)
+
 ## 📋 Table of Contents
 
 - [The Problem](#-the-problem)
@@ -263,12 +265,11 @@ halo/
 - [x] Module launch system
 - [x] Hexagonal docking
 - [x] Telemetry dashboard
-- [x] Fault simulation
+- [x] Real physics simulation
+- [x] Multi-hub networking
 
 ### Phase 2: Advanced Features 🚧
-- [ ] Real physics simulation
 - [ ] AI-driven optimization
-- [ ] Multi-hub networking
 - [ ] Resource flow visualization
 - [ ] Historical data analytics
 

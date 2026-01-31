@@ -18,7 +18,47 @@ export class UIManager {
     this.previewMesh = null;
     this.previewCamera = null;
     
+    // Sistema de toggle para system log
+    this.systemLog = document.getElementById("system-log");
+    this.btnCloseLog = document.getElementById("btn-close-log");
+    this.btnOpenLog = document.getElementById("btn-open-log");
+    this.isLogVisible = true;
+    
     this.initPreviewSystem();
+    this.initSystemLogToggle();
+  }
+  
+  initSystemLogToggle() {
+    if (!this.systemLog || !this.btnCloseLog || !this.btnOpenLog) {
+      console.warn("UIManager: System log toggle elements not found");
+      return;
+    }
+    
+    // Botón para cerrar el system log
+    this.btnCloseLog.addEventListener("click", () => {
+      this.hideSystemLog();
+    });
+    
+    // Botón para abrir el system log
+    this.btnOpenLog.addEventListener("click", () => {
+      this.showSystemLog();
+    });
+  }
+  
+  hideSystemLog() {
+    if (!this.isLogVisible) return;
+    
+    this.systemLog.classList.add("hidden");
+    this.btnOpenLog.style.display = "block";
+    this.isLogVisible = false;
+  }
+  
+  showSystemLog() {
+    if (this.isLogVisible) return;
+    
+    this.systemLog.classList.remove("hidden");
+    this.btnOpenLog.style.display = "none";
+    this.isLogVisible = true;
   }
 
   initPreviewSystem() {
