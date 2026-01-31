@@ -13,7 +13,8 @@ Proyecto inicial para Hackathon: un Digital Twin WebGL de una fábrica espacial 
 
 ## Cómo probar (rápido)
 
-Abre `index.html` con un servidor estático (recomendado).
+Abre
+ `index.html` con un servidor estático (recomendado).
 
 Ejemplos:
 
