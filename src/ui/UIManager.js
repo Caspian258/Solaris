@@ -341,7 +341,7 @@ export class UIManager {
         const removeBtn = document.createElement("button");
         removeBtn.className = "btn-undock";
         removeBtn.innerHTML = '<i class="fa-solid fa-eject"></i> REMOVE MODULE';
-        removeBtn.style.cssText = 'width: 100%; margin-bottom: 8px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);';
+        removeBtn.style.cssText = 'width: 100%; margin-bottom: 8px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: #ffffff;';
         removeBtn.onclick = () => {
           if (this.sceneManager?.simulationManager?.undockModule) {
             this.sceneManager.simulationManager.undockModule(module);
