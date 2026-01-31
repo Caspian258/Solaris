@@ -255,41 +255,32 @@ export class GraphVisualizer {
     
     // El hub central siempre es el primer elemento (ID 0)
     const centralHub = modules[0];
-    if (centralHub && centralHub.mesh) {
-      this.graph.set(this.getModuleId(centralHub.mesh), []);
-    }
+    if (!centralHub || !centralHub.mesh) return;
     
-    // Construir conexiones basadas en proximidad (< 3.0 unidades)
-    modules.forEach((modA, idxA) => {
-      if (!modA.mesh) return;
+    const hubId = this.getModuleId(centralHub.mesh);
+    this.graph.set(hubId, []);
+    
+    // Solo conectar cada módulo con el hub central (sin conexiones módulo-módulo)
+    modules.forEach((mod, idx) => {
+      if (idx === 0 || !mod.mesh) return; // Saltar el hub mismo
       
-      const idA = this.getModuleId(modA.mesh);
-      if (!this.graph.has(idA)) {
-        this.graph.set(idA, []);
-      }
+      const modId = this.getModuleId(mod.mesh);
+      const dist = BABYLON.Vector3.Distance(centralHub.mesh.position, mod.mesh.position);
       
-      modules.forEach((modB, idxB) => {
-        if (idxA >= idxB || !modB.mesh) return;
-        
-        const dist = BABYLON.Vector3.Distance(modA.mesh.position, modB.mesh.position);
-        
-        // Si están conectados (distancia < 3.0)
-        if (dist < 3.0) {
-          const idB = this.getModuleId(modB.mesh);
-          
-          if (!this.graph.has(idB)) {
-            this.graph.set(idB, []);
-          }
-          
-          // Conexión bidireccional
-          if (!this.graph.get(idA).includes(idB)) {
-            this.graph.get(idA).push(idB);
-          }
-          if (!this.graph.get(idB).includes(idA)) {
-            this.graph.get(idB).push(idA);
-          }
+      // Si el módulo está cerca del hub (< 3.0 unidades)
+      if (dist < 3.0) {
+        if (!this.graph.has(modId)) {
+          this.graph.set(modId, []);
         }
-      });
+        
+        // Conexión bidireccional hub-módulo
+        if (!this.graph.get(hubId).includes(modId)) {
+          this.graph.get(hubId).push(modId);
+        }
+        if (!this.graph.get(modId).includes(hubId)) {
+          this.graph.get(modId).push(hubId);
+        }
+      }
     });
   }
   
@@ -533,55 +524,30 @@ export class GraphVisualizer {
     const modules = this.simulationManager.modules;
     if (!modules || modules.length === 0) return;
     
-    // 1. Dibujar todas las conexiones normales
-    this.graph.forEach((neighbors, moduleId) => {
-      const modA = modules.find(m => this.getModuleId(m.mesh) === moduleId);
-      if (!modA || !modA.mesh) return;
-      
-      neighbors.forEach(neighborId => {
-        const modB = modules.find(m => this.getModuleId(m.mesh) === neighborId);
-        if (!modB || !modB.mesh) return;
-        
-        // No dibujar si es parte del path (se dibujará después)
-        const idA = this.getModuleId(modA.mesh);
-        const idB = this.getModuleId(modB.mesh);
-        
-        const isInPath = this.pathToSelected.length > 0 && (
-          (this.pathToSelected.includes(idA) && this.pathToSelected.includes(idB))
-        );
-        
-        if (!isInPath) {
-          // Verificar si ambos módulos están acoplados
-          const aIsDocked = this.isModuleDocked(modA.mesh);
-          const bIsDocked = this.isModuleDocked(modB.mesh);
-          
-          if (aIsDocked && bIsDocked) {
-            // Ambos acoplados: línea verde sólida
-            this.drawLine(modA.mesh, modB.mesh, cx, cy, this.colors.connection, false);
-          } else {
-            // Al menos uno no acoplado: línea gris cortada
-            this.drawLine(modA.mesh, modB.mesh, cx, cy, this.colors.dashedConnection, true);
-          }
-        }
-      });
-    });
+    const centralHub = modules[0];
+    if (!centralHub || !centralHub.mesh) return;
     
-    // 2. Dibujar ruta destacada (si existe)
-    if (this.pathToSelected.length > 1) {
-      for (let i = 0; i < this.pathToSelected.length - 1; i++) {
-        const idA = this.pathToSelected[i];
-        const idB = this.pathToSelected[i + 1];
+    // 1. Dibujar conexiones hub-módulo (radiales desde el centro)
+    modules.forEach((mod, idx) => {
+      if (idx === 0 || !mod.mesh) return; // Saltar el hub mismo
+      
+      const dist = BABYLON.Vector3.Distance(centralHub.mesh.position, mod.mesh.position);
+      
+      // Solo dibujar si está cerca del hub
+      if (dist < 3.0) {
+        const isModuleDocked = this.isModuleDocked(mod.mesh);
         
-        const modA = modules.find(m => this.getModuleId(m.mesh) === idA);
-        const modB = modules.find(m => this.getModuleId(m.mesh) === idB);
-        
-        if (modA && modB && modA.mesh && modB.mesh) {
-          this.drawLine(modA.mesh, modB.mesh, cx, cy, this.colors.pathHighlight);
+        if (isModuleDocked) {
+          // Módulo acoplado: línea verde sólida
+          this.drawLine(centralHub.mesh, mod.mesh, cx, cy, this.colors.connection, false);
+        } else {
+          // Módulo no acoplado: línea gris cortada
+          this.drawLine(centralHub.mesh, mod.mesh, cx, cy, this.colors.dashedConnection, true);
         }
       }
-    }
+    });
     
-    // 3. Dibujar módulos
+    // 2. Dibujar módulos
     modules.forEach(mod => {
       if (!mod.mesh) return;
       
