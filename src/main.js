@@ -109,7 +109,7 @@ document.querySelectorAll(".graph-launch-btn").forEach(btn => {
   });
 });
 
-// Almacenar módulos personalizados
+// Almacenar módulos  y mas
 const customModules = [];
 
 // Modal para crear módulo personalizado
@@ -195,4 +195,4 @@ document.getElementById("btn-create-custom-module")?.addEventListener("click", (
   colorInput.value = "#ff6b6b";
   
   uiManager.log(`Módulo personalizado creado: ${moduleName}`, "SUCCESS");
-});
+});personalizados
